@@ -1,0 +1,3 @@
+# doctor-selector
+
+A site contains a listing of doctors. Users can browse for doctors given a specific specialty, area, review score etc. When a doctor is selected, display their details, along with a list of similar doctors, in a prioritized order. You define what similar means and the result ordering, but clearly document any assumptions in your code. You can assume the entire directory of doctors fits into memory.
