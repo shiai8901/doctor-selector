@@ -2,9 +2,20 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const router = express.Router();
-const request = require('request');
+
+const https = require('https');
+const querystring = require('querystring');
+
+const yelp = require('yelp-fusion');
+
+const client_id = "6p3bSON7IBTS4AG4IFZG8w";
+const client_secret = "qeSwDxnDBrwmMm9aMhPMfX8KAuBIdEbJkxaEby50EWzQ0WlAUlw97kK5qTfGYF5O";
+const access_token = "bQzvX6U3XCb0cCxrmDRopHG2GetJRMQy062jGDqEhUaLmkbzAT_O07rNW88STrPNhpBSn_P7sNjO5ThOGof77jjbM1nNrMcYJ32V1LZJxE6SamrX_xUyANvO9BBxWXYx";
+
+
 
 const port = process.env.PORT || 8080;
+// const api_url = "https://api.yelp.com/v3/businesses/search";
 
 app.use(express.static(__dirname + '/dist'));
 
@@ -14,7 +25,7 @@ router.use((req, res, next) => {
 	next();
 });
 
-const specialty = [
+const specialties = [
 	{id: 0, name: 'alternative medicine'},
 	{id: 1, name: 'anesthesiology'},
 	{id: 2, name: 'cardiovascular health'},
@@ -50,14 +61,44 @@ const specialty = [
 
 
 // API Routes
+// initial request, get all 'doctors' from yelp api
 router.get('/', (req, res) => {
-	res.send("hi!");
+	const searchRequest = {
+	"term": 'Doctor',
+	"location": 'San Francisco, CA'
+	};
+
+	const client = yelp.client(access_token);
+		client.search(searchRequest).then(response => {
+			const allDoctors = response.jsonBody.businesses;
+	    console.log(allDoctors.length);
+	    res.json(allDoctors);
+		});
 });
 
+// initial request, get all 'specialties' from THIS server
 router.get('/specialtyList', (req, res) => {
-	console.log('Response: ', specialty);
-	res.json(specialty);
+	// console.log('Response: ', specialties);
+	res.json(specialties);
 });
+
+// get doctors by specialty from yelp api
+router.get('/specialty/:specialtyName', (req, res) => {
+	const specialtyName = req.params.specialtyName;
+	// const specialtyId = specialties.filter((specialty) => (specialty.name === specialtyName));
+	// console.log("specialtyId",specialtyId);
+	const searchRequest = {
+	"term": specialtyName,
+	"location": 'San Francisco, CA'
+	};
+
+	const client = yelp.client(access_token);
+		client.search(searchRequest).then(response => {
+			const allDoctors = response.jsonBody.businesses;
+	    console.log(allDoctors.length);
+	    res.json(allDoctors);
+		});
+})
 
 app.use('/api', router);
 app.listen(port);
