@@ -69,6 +69,7 @@ app.get('/api/doctorName/:name', (req, res) => {
 	});
 })
 
+// get other routes, send back 404 info
 app.get('*', (req, res) => {
 	console.log("hi, it's 404")
 	res.status(404).send('Sorry, we cannot find that!');
