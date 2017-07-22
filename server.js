@@ -7,7 +7,7 @@ const https = require('https');
 const querystring = require('querystring');
 
 const yelp = require('yelp-fusion');
-const client = yelp.client("bQzvX6U3XCb0cCxrmDRopHG2GetJRMQy062jGDqEhUaLmkbzAT_O07rNW88STrPNhpBSn_P7sNjO5ThOGof77jjbM1nNrMcYJ32V1LZJxE6SamrX_xUyANvO9BBxWXYx");
+const client = yelp.client(process.env.yelp_access_token);
 
 const port = process.env.PORT || 8080;
 
