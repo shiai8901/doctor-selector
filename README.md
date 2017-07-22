@@ -2,6 +2,8 @@
 
 A simple web app to browse doctors. User can select doctors by specialty, area and ratings. When user click one doctor, his/her detail information will show up, and also a list of similar doctors will be displayed. `Similar means same specialty and same location`.
 
+Take a look at the app https://doctor-selector.herokuapp.com
+
 Specialty list is from yelp api categories https://www.yelp.com/developers/documentation/v3/all_category_list
 All doctor information are fetched through yelp fusion api
 
