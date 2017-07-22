@@ -10,12 +10,10 @@ class Dropdown extends React.Component {
 																	value={option.name} >{option.name}</option>));
 		}
 		let context = this;
-		console.log(this.props)
 		return (
-			<div>
-				<label htmlFor={this.props.filter}>{this.props.filter}</label><div className="arrow"><i className="down"></i></div>
-				
-				<select onChange={this.props.action}>
+			<div className="dropdown">
+				<label className="form-label" htmlFor={this.props.filter}>{this.props.filter}</label>			
+				<select className="filter-item" onChange={this.props.action}>
 					<option id={this.props.defaultOption.id} value={this.props.defaultOption.value}>{this.props.defaultOption.name}</option>
 					<option disabled>--</option>
 					{options}
