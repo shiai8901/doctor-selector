@@ -1,6 +1,4 @@
 import React from 'react';
-import scriptLoader from 'react-async-script-loader'
-
 import styles from '../../dist/styles.css'
 
 class GoogleMapView extends React.Component {
