@@ -16,7 +16,7 @@ After setting up your yelp api access token, now we can start the App
 
 You need to install npm and Node.js on your device
 
-###Installing
+### Installing
 ```
 npm install
 npm run build
