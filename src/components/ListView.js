@@ -1,27 +1,28 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import ListItem from './ListItem';
 import styles from '../../dist/styles.css'
 
-class ListView extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+const ListView = ({ list, updateSpecialty, setSelectedDoctor }) => {
 
-  render() {
-    let items = [];
-    if (this.props.list) {
-      items = this.props.list.map(item => (<ListItem 
-                                              key={item.id} 
-                                              info={item} 
-                                              updateSpecialty={this.props.updateSpecialty} 
-                                              setSelectedDoctor={this.props.setSelectedDoctor} />));
-    }
-    return (
-      <div className="list">
+  let items = list.map(item => (<ListItem 
+                                  key={item.id} 
+                                  info={item} 
+                                  updateSpecialty={updateSpecialty} 
+                                  setSelectedDoctor={setSelectedDoctor} />));
+
+  return (
+    <div className="list">
       {items}
-      </div>
-      )
-  }
+    </div>
+    )
+}
+
+ListView.propTypes = {
+  list: PropTypes.array,
+  setSelectedDoctor: PropTypes.func,
+  updateSpecialty: PropTypes.func
 }
 
 export default ListView

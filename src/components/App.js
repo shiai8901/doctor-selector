@@ -14,34 +14,54 @@ class App extends React.Component {
       selectSpecialty: "doctor",
       rating: 0,
       area: "san francisco, ca",
-      selectedDoctor: "",
+      selectedDoctor: null,
       selectedDoctorDetailInfo: null
     }
-    this.getSpecialtyList = this.getSpecialtyList.bind(this);
-    this.getDoctorsBySpecialty = this.getDoctorsBySpecialty.bind(this);
-    this.getDoctorsByRating = this.getDoctorsByRating.bind(this);
+    
     this.updateSpecialty = this.updateSpecialty.bind(this);
+    this.getDoctorsBySpecialty = this.getDoctorsBySpecialty.bind(this);
+
     this.updateArea = this.updateArea.bind(this);
     this.getDoctorsByArea = this.getDoctorsByArea.bind(this);
-    this.getDoctorsFromServer = this.getDoctorsFromServer.bind(this);
+
+    this.getDoctorsByRating = this.getDoctorsByRating.bind(this);
+
     this.setSelectedDoctor = this.setSelectedDoctor.bind(this);
+
+    this.getDoctorsFromServer = this.getDoctorsFromServer.bind(this);
+    this.getSpecialtyList = this.getSpecialtyList.bind(this);
   }
 
-  getSpecialtyList() {
-    axios.get('/api/specialtyList')
-    .then((response) => {
-      this.setState({specialtyList: response.data});
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+
+/**
+ * handle user selecting specialty option inside Filter component
+ */
+  updateSpecialty(e) {
+    let specialty = e.target.text;
+
+    if (this.state.selectedDoctor) {
+      this.setState({
+        selectedDoctor: null
+      });
+    }
+
+    const cb = (data) => {
+      this.setState({
+        allDoctors: data,
+        selectSpecialty: specialty
+      });
+    }
+    this.getDoctorsFromServer(specialty, this.state.area, this.state.rating, cb);
   }
 
+/**
+ * get doctors by selected specialty from server
+ */
   getDoctorsBySpecialty(e) {
 
     if (this.state.selectedDoctor) {
       this.setState({
-        selectedDoctor: ""
+        selectedDoctor: null
       });
     }
     
@@ -55,11 +75,52 @@ class App extends React.Component {
     this.getDoctorsFromServer(specialty, this.state.area, this.state.rating, cb);
   }
 
+/**
+ * handle user entering location in <input> inside Filter component
+ */
+  updateArea(e) {
+
+    if (this.state.selectedDoctor) {
+      this.setState({
+        selectedDoctor: null
+      });
+    }
+    
+    this.setState({
+      area: e.target.value
+    });
+    console.log(e.target.value);
+  }
+
+/**
+ * get doctors with entered location from server
+ */
+  getDoctorsByArea(e) {
+    e.preventDefault();
+
+    if (this.state.selectedDoctor) {
+      this.setState({
+        selectedDoctor: null
+      });
+    }
+
+    const cb = (data) => {
+      this.setState({
+        allDoctors: data
+      });
+    }
+    this.getDoctorsFromServer(this.state.selectSpecialty, this.state.area, this.state.rating, cb);
+  }
+
+
+/**
+ * get doctors by rating equal or greater than selected rating from server
+ */
   getDoctorsByRating(newRating) {
 
     if (this.state.selectedDoctor) {
       this.setState({
-        selectedDoctor: ""
+        selectedDoctor: null
       });
     }
     
@@ -72,48 +133,30 @@ class App extends React.Component {
     this.getDoctorsFromServer(this.state.selectSpecialty, this.state.area, newRating, cb);
   }
 
-  updateArea(e) {
-
-    if (this.state.selectedDoctor) {
-      this.setState({
-        selectedDoctor: ""
-      });
-    }
-    
-    this.setState({
-      area: e.target.value
+/**
+ * handle user selecting one doctor
+ */
+  setSelectedDoctor(e) {
+    const name = e.target.innerHTML;
+    const doctor = this.state.allDoctors.filter((doctor) => {
+      return doctor.name === name;
     });
-    console.log(e.target.value);
-  }
-
-  getDoctorsByArea(e) {
-    e.preventDefault();
-
-    if (this.state.selectedDoctor) {
-      this.setState({
-        selectedDoctor: ""
-      });
-    }
-
-    const cb = (data) => {
-      this.setState({
-        allDoctors: data
-      });
-    }
-    this.getDoctorsFromServer(this.state.selectSpecialty, this.state.area, this.state.rating, cb);
-  }
-
-  updateSpecialty(e) {
-    let specialty = e.target.text;
     const cb = (data) => {
       this.setState({
         allDoctors: data,
-        selectSpecialty: specialty
+        selectedDoctor: doctor[0]
       });
     }
-    this.getDoctorsFromServer(specialty, this.state.area, this.state.rating, cb);
+    this.getDoctorsFromServer(doctor[0].categories[0].title, doctor[0].location.city, 0, cb);
   }
 
+/**
+ * get doctors from server 
+ * @specialtyName: the selected specialtyName from specialtyList, default value is "doctor"
+ * @area: the location for searching doctors, default value is "san francisco"
+ * @rating: doctor's rating greater or equal to selected rating, default value is 0
+ * @cb: callback function to handle the data GET from server
+ */
   getDoctorsFromServer(specialtyName, area, rating, cb) {
     axios.get('/api/findDoctors/'+ specialtyName + "/" + area + "/" + rating)
     .then((response) => {
@@ -124,20 +167,17 @@ class App extends React.Component {
     });
   }
 
-  setSelectedDoctor(e) {
-    console.log(e.target.innerHTML);
-    const name = e.target.innerHTML;
-    const doctor = this.state.allDoctors.filter((doctor) => {
-      return doctor.name === name;
+/**
+ * get specialtyList from server
+ */
+  getSpecialtyList() {
+    axios.get('/api/specialtyList')
+    .then((response) => {
+      this.setState({specialtyList: response.data});
+    })
+    .catch(function (error) {
+      console.log(error);
     });
-console.log(doctor[0].categories[0].title, doctor[0].location.city, doctor[0].rating);
-    const cb = (data) => {
-      this.setState({
-        allDoctors: data,
-        selectedDoctor: doctor[0]
-      });
-    }
-    this.getDoctorsFromServer(doctor[0].categories[0].title, doctor[0].location.city, doctor[0].rating, cb);
   }
 
   componentDidMount() {
@@ -152,7 +192,7 @@ console.log(doctor[0].categories[0].title, doctor[0].location.city, doctor[0].ra
           getDoctorsBySpecialty={this.getDoctorsBySpecialty} 
           updateArea={this.updateArea}
           getDoctorsByArea={this.getDoctorsByArea}
-          ating={this.state.rating}
+          rating={this.state.rating}
           getDoctorsByRating={this.getDoctorsByRating} />
         <Main 
           selectedDoctor={this.state.selectedDoctor}
@@ -165,14 +205,5 @@ console.log(doctor[0].categories[0].title, doctor[0].location.city, doctor[0].ra
   }
   
 }
-
-// App.propTypes = {
-//   specialtyList: React.PropTypes.array
-// };
-
-// App.defaultProps = {
-//   specialtyList: []
-// };
-
 
 export default App;

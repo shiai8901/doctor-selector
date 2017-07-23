@@ -1,26 +1,28 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 
-class Dropdown extends React.Component {
+const Dropdown = ({options, defaultOption, filter, action }) => {
+  let slectionOptions = options.map((option) => (<option key={option.id} 
+                                                        id={options.id}
+                                                        value={option.name} >{option.name}</option>));
 
-  render() {
-    let options = [];
-    if (this.props.options) {
-      options = this.props.options.map((option) => (<option key={option.id} id={options.id}
-                                  value={option.name} >{option.name}</option>));
-    }
-    let context = this;
-    return (
-      <div className="dropdown">
-        <label className="form-label" htmlFor={this.props.filter}>{this.props.filter}</label>     
-        <select className="filter-item" onChange={this.props.action}>
-          <option id={this.props.defaultOption.id} value={this.props.defaultOption.value}>{this.props.defaultOption.name}</option>
-          <option disabled>--</option>
-          {options}
-        </select>
-      </div>
-    )
-  }
+  return (
+    <div className="dropdown">
+      <label className="form-label" htmlFor={filter}>{filter}</label>     
+      <select className="filter-item" onChange={action}>
+        <option id={defaultOption.id} value={defaultOption.value}>{defaultOption.name}</option>
+        <option disabled>--</option>
+        {slectionOptions}
+      </select>
+    </div>
+  )
+}
+
+Dropdown.propTypes = {
+  options: PropTypes.array,
+  defaultOption: PropTypes.object,
+  filter: PropTypes.string,
+  action: PropTypes.func
 }
 
 export default Dropdown
