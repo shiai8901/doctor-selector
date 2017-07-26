@@ -51,18 +51,6 @@ app.get('/api/findDoctors/:specialtyName/:area/:rating', (req, res) => {
   });
 });
 
-// get one single doctor detail information and similar doctors from yelp api
-app.get('/api/doctorName/:name', (req, res) => {
-  const searchRequest = {
-  "term": req.params.name
-  };
-  console.log(searchRequest);
-  client.search(searchRequest).then(response => {
-    console.log(response.jsonBody.businesses);
-    res.json("hi");
-  });
-})
-
 // get other routes, send back 404 info
 app.get('*', (req, res) => {
   console.log("hi, it's 404")
